@@ -29,7 +29,9 @@ export default function NewRequest() {
       description,
       type,
       criteria: criteriaArray,
+      tags: criteriaArray,
       status: 'pending',
+      priority: 'normal',
     });
 
     alert('Request submitted successfully!');
