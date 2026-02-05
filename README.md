@@ -60,7 +60,7 @@ This platform enables a three-stakeholder ecosystem:
 
 ### Prerequisites
 - Node.js 20+
-- npm
+- bun 1.0+
 
 ### Installation
 
@@ -72,12 +72,12 @@ cd advisor
 
 2. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
 3. Run the development server:
 ```bash
-npm run dev
+bun run dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000)
@@ -85,14 +85,14 @@ npm run dev
 ### Available Scripts
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run typecheck    # Run TypeScript type checking
-npm run test         # Run tests
-npm run test:watch   # Run tests in watch mode
-npm run test:coverage # Run tests with coverage report
+bun run dev          # Start development server
+bun run build        # Build for production
+bun run start        # Start production server
+bun run lint         # Run ESLint
+bun run typecheck    # Run TypeScript type checking
+bun run test         # Run tests
+bun run test:watch   # Run tests in watch mode
+bun run test:coverage # Run tests with coverage report
 ```
 
 ## Project Structure
@@ -186,8 +186,8 @@ The project includes comprehensive tests for:
 
 Run tests:
 ```bash
-npm test                 # Run all tests
-npm run test:coverage    # Run with coverage report
+bun test                 # Run all tests
+bun run test:coverage    # Run with coverage report
 ```
 
 ## CI/CD Pipeline

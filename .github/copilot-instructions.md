@@ -58,6 +58,8 @@ This is the advisor repository. When contributing to this project, please follow
 
 ## Dependencies
 
+- This project uses **bun** as the package manager
+- Use `bun install` to install dependencies, not npm or yarn
 - Only add new dependencies when necessary
 - Prefer well-maintained, popular libraries
 - Keep dependencies up to date
