@@ -28,9 +28,26 @@ import {
   getCommentsByEntity,
   getExpertStats,
   getAnalystStats,
+  getAllPlatforms,
+  getPlatformById,
+  getPlatformBySlug,
+  getPlatformsByType,
+  getPlatformsWithApi,
+  getUserPlatforms,
+  getAllVideos,
+  getVideoById,
+  getVideosByCategory,
+  getVideosByDifficulty,
+  getVideosForUser,
+  getVideoSourcesForUser,
+  getVideoSourceById,
+  getRecommendedSourceForUser,
+  checkVideoAvailabilityForUser,
   users,
   requests,
   notifications,
+  platforms,
+  videos,
 } from '@/lib/data';
 
 describe('User Functions', () => {
@@ -124,7 +141,7 @@ describe('Request Functions', () => {
         userId: '1',
         title: 'Test Request',
         description: 'Test description',
-        type: 'advice',
+        type: 'video_recommendation',
         criteria: ['test'],
         tags: ['test'],
         status: 'pending',
@@ -228,10 +245,10 @@ describe('Content Functions', () => {
       });
     });
 
-    it('should filter by content type', () => {
-      const videos = getContentItems({ contentType: 'video' });
-      videos.forEach(item => {
-        expect(item.contentType).toBe('video');
+    it('should filter by category', () => {
+      const tutorials = getContentItems({ category: 'tutorial' });
+      tutorials.forEach(item => {
+        expect(item.category).toBe('tutorial');
       });
     });
 
@@ -244,10 +261,10 @@ describe('Content Functions', () => {
   });
 
   describe('getContentItemById', () => {
-    it('should return content item for valid id', () => {
-      const item = getContentItemById('content1');
+    it('should return video for valid id', () => {
+      const item = getContentItemById('video1');
       expect(item).toBeDefined();
-      expect(item?.id).toBe('content1');
+      expect(item?.id).toBe('video1');
     });
   });
 
@@ -414,6 +431,159 @@ describe('Analytics Functions', () => {
       expect(stats.approved).toBeDefined();
       expect(stats.pending).toBeDefined();
       expect(stats.averageQuality).toBeDefined();
+    });
+  });
+});
+
+describe('Platform Functions', () => {
+  describe('getAllPlatforms', () => {
+    it('should return all platforms', () => {
+      const allPlatforms = getAllPlatforms();
+      expect(allPlatforms.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getPlatformById', () => {
+    it('should return platform for valid id', () => {
+      const platform = getPlatformById('youtube');
+      expect(platform).toBeDefined();
+      expect(platform?.name).toBe('YouTube');
+    });
+
+    it('should return undefined for invalid id', () => {
+      const platform = getPlatformById('invalid');
+      expect(platform).toBeUndefined();
+    });
+  });
+
+  describe('getPlatformBySlug', () => {
+    it('should return platform for valid slug', () => {
+      const platform = getPlatformBySlug('coursera');
+      expect(platform).toBeDefined();
+      expect(platform?.name).toBe('Coursera');
+    });
+  });
+
+  describe('getPlatformsByType', () => {
+    it('should return platforms of a specific type', () => {
+      const subscriptionPlatforms = getPlatformsByType('subscription');
+      expect(subscriptionPlatforms.length).toBeGreaterThan(0);
+      subscriptionPlatforms.forEach(p => {
+        expect(p.type).toBe('subscription');
+      });
+    });
+  });
+
+  describe('getPlatformsWithApi', () => {
+    it('should return only platforms with API', () => {
+      const apiPlatforms = getPlatformsWithApi();
+      expect(apiPlatforms.length).toBeGreaterThan(0);
+      apiPlatforms.forEach(p => {
+        expect(p.hasApi).toBe(true);
+      });
+    });
+  });
+
+  describe('getUserPlatforms', () => {
+    it('should return platforms for user subscriptions', () => {
+      const userPlatformList = getUserPlatforms('1');
+      expect(userPlatformList.length).toBeGreaterThan(0);
+    });
+
+    it('should return empty for invalid user', () => {
+      const userPlatformList = getUserPlatforms('invalid');
+      expect(userPlatformList.length).toBe(0);
+    });
+  });
+});
+
+describe('Video Functions', () => {
+  describe('getAllVideos', () => {
+    it('should return all videos', () => {
+      const allVideos = getAllVideos();
+      expect(allVideos.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getVideoById', () => {
+    it('should return video for valid id', () => {
+      const video = getVideoById('video1');
+      expect(video).toBeDefined();
+      expect(video?.title).toContain('Neural Networks');
+    });
+
+    it('should return undefined for invalid id', () => {
+      const video = getVideoById('invalid');
+      expect(video).toBeUndefined();
+    });
+  });
+
+  describe('getVideosByCategory', () => {
+    it('should return videos of specific category', () => {
+      const tutorials = getVideosByCategory('tutorial');
+      expect(tutorials.length).toBeGreaterThan(0);
+      tutorials.forEach(v => {
+        expect(v.category).toBe('tutorial');
+      });
+    });
+  });
+
+  describe('getVideosByDifficulty', () => {
+    it('should return videos of specific difficulty', () => {
+      const beginnerVideos = getVideosByDifficulty('beginner');
+      expect(beginnerVideos.length).toBeGreaterThan(0);
+      beginnerVideos.forEach(v => {
+        expect(v.difficulty).toBe('beginner');
+      });
+    });
+  });
+
+  describe('getVideosForUser', () => {
+    it('should return videos available to user based on platforms', () => {
+      const userVideos = getVideosForUser('1');
+      expect(userVideos.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getVideoSourcesForUser', () => {
+    it('should return sources available to user', () => {
+      const sources = getVideoSourcesForUser('video1', '1');
+      expect(sources.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getVideoSourceById', () => {
+    it('should return source for valid id', () => {
+      const source = getVideoSourceById('vs1-yt');
+      expect(source).toBeDefined();
+      expect(source?.platformId).toBe('youtube');
+    });
+  });
+
+  describe('getRecommendedSourceForUser', () => {
+    it('should return recommended source for user', () => {
+      const source = getRecommendedSourceForUser('video1', '1');
+      expect(source).toBeDefined();
+    });
+
+    it('should return undefined for unavailable video', () => {
+      const source = getRecommendedSourceForUser('invalid', '1');
+      expect(source).toBeUndefined();
+    });
+  });
+
+  describe('checkVideoAvailabilityForUser', () => {
+    it('should return availability info for user', () => {
+      const availability = checkVideoAvailabilityForUser('video1', '1');
+      expect(availability.available).toBeDefined();
+      expect(availability.sources).toBeDefined();
+      expect(availability.unavailablePlatforms).toBeDefined();
+    });
+
+    it('should return not available for invalid video', () => {
+      const availability = checkVideoAvailabilityForUser('invalid', '1');
+      expect(availability.available).toBe(false);
+      expect(availability.sources.length).toBe(0);
     });
   });
 });

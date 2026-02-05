@@ -6,7 +6,11 @@ import {
   RequestResponse,
   KnowledgeBase,
   KnowledgeEntry,
-  ContentItem,
+  Video,
+  VideoSource,
+  VideoSeries,
+  Platform,
+  PlatformNote,
   Tag,
   Annotation,
   Project,
@@ -31,6 +35,7 @@ export const users: User[] = [
     role: 'user',
     roles: ['user'],
     subscriptionStatus: 'active',
+    platformSubscriptions: ['youtube', 'netflix', 'coursera'],
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date('2026-01-01'),
   },
@@ -41,6 +46,7 @@ export const users: User[] = [
     role: 'expert',
     roles: ['expert'],
     subscriptionStatus: 'active',
+    platformSubscriptions: ['youtube', 'vimeo', 'coursera', 'udemy', 'linkedin-learning'],
     bio: 'AI/ML researcher with 10 years of experience in education technology',
     expertise: ['AI', 'Machine Learning', 'Education', 'Data Science'],
     createdAt: new Date('2026-01-01'),
@@ -53,6 +59,7 @@ export const users: User[] = [
     role: 'analyst',
     roles: ['analyst'],
     subscriptionStatus: 'active',
+    platformSubscriptions: ['youtube', 'vimeo', 'nebula', 'curiositystream'],
     bio: 'Content researcher specializing in technology and science education',
     expertise: ['Content Curation', 'EdTech', 'Research'],
     createdAt: new Date('2026-01-05'),
@@ -65,6 +72,7 @@ export const users: User[] = [
     role: 'expert',
     roles: ['expert', 'analyst'],
     subscriptionStatus: 'active',
+    platformSubscriptions: ['youtube', 'coursera', 'edx', 'pluralsight'],
     bio: 'Senior researcher and content specialist in computer science education',
     expertise: ['Computer Science', 'Programming', 'Curriculum Design'],
     createdAt: new Date('2026-01-03'),
@@ -77,6 +85,7 @@ export const users: User[] = [
     role: 'user',
     roles: ['user'],
     subscriptionStatus: 'active',
+    platformSubscriptions: ['youtube', 'udemy'],
     createdAt: new Date('2026-01-10'),
     updatedAt: new Date('2026-01-10'),
   },
@@ -94,6 +103,265 @@ export const tags: Tag[] = [
   { id: 't8', name: 'Tutorial', category: 'Content Type', color: '#8B5CF6', usageCount: 120, createdAt: new Date('2026-01-01') },
   { id: 't9', name: 'Data Science', category: 'Technology', color: '#3B82F6', usageCount: 41, createdAt: new Date('2026-01-01') },
   { id: 't10', name: 'Web Development', category: 'Technology', color: '#3B82F6', usageCount: 53, createdAt: new Date('2026-01-01') },
+];
+
+// Video Platforms
+export const platforms: Platform[] = [
+  {
+    id: 'youtube',
+    name: 'YouTube',
+    slug: 'youtube',
+    type: 'freemium',
+    logoUrl: 'https://www.youtube.com/favicon.ico',
+    websiteUrl: 'https://www.youtube.com',
+    description: 'Free video platform with ads. Premium subscription removes ads and enables downloads.',
+    hasFreeTier: true,
+    hasPremiumTier: true,
+    supportsCreatorSubscriptions: true, // YouTube Channel Memberships
+    supportsPerVideoPurchase: true, // YouTube Movies/Shows
+    pricingTiers: [
+      { id: 'yt-free', name: 'Free', features: ['Watch videos', 'Create playlists'], hasAds: true, maxQuality: '4k', allowsDownload: false, allowsOffline: false },
+      { id: 'yt-premium', name: 'Premium', price: 13.99, currency: 'USD', billingPeriod: 'monthly', features: ['Ad-free', 'Background play', 'Downloads', 'YouTube Music'], hasAds: false, maxQuality: '4k', allowsDownload: true, allowsOffline: true },
+    ],
+    hasApi: true,
+    apiDocsUrl: 'https://developers.google.com/youtube/v3',
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: false,
+      canGetPlaybackUrl: false,
+      canSearchContent: true,
+      canGetTranscripts: true,
+      rateLimitPerHour: 10000,
+      authType: 'api_key',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'fr', 'de', 'ja', 'ko', 'pt', 'zh'],
+    supportsDownload: false,
+    supportsOffline: false,
+    averageVideoQuality: '4k',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'vimeo',
+    name: 'Vimeo',
+    slug: 'vimeo',
+    type: 'free',
+    logoUrl: 'https://vimeo.com/favicon.ico',
+    websiteUrl: 'https://vimeo.com',
+    description: 'Professional video platform popular with creators. Higher quality, fewer ads.',
+    hasApi: true,
+    apiDocsUrl: 'https://developer.vimeo.com',
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: true,
+      canGetPlaybackUrl: true,
+      canSearchContent: true,
+      canGetTranscripts: false,
+      rateLimitPerHour: 5000,
+      authType: 'oauth',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'fr', 'de'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: '4k',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'netflix',
+    name: 'Netflix',
+    slug: 'netflix',
+    type: 'subscription',
+    logoUrl: 'https://www.netflix.com/favicon.ico',
+    websiteUrl: 'https://www.netflix.com',
+    description: 'Subscription streaming service with documentaries and educational content.',
+    hasApi: false,
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'fr', 'de', 'ja', 'ko', 'pt', 'zh', 'it'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: '4k',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'coursera',
+    name: 'Coursera',
+    slug: 'coursera',
+    type: 'educational',
+    logoUrl: 'https://www.coursera.org/favicon.ico',
+    websiteUrl: 'https://www.coursera.org',
+    description: 'Online learning platform partnered with universities. Mix of free and paid courses.',
+    hasApi: true,
+    apiDocsUrl: 'https://build.coursera.org/developer',
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: true,
+      canGetPlaybackUrl: false,
+      canSearchContent: true,
+      canGetTranscripts: true,
+      rateLimitPerHour: 1000,
+      authType: 'oauth',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'fr', 'de', 'zh', 'ar', 'ru'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: 'hd',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'udemy',
+    name: 'Udemy',
+    slug: 'udemy',
+    type: 'purchase',
+    logoUrl: 'https://www.udemy.com/favicon.ico',
+    websiteUrl: 'https://www.udemy.com',
+    description: 'Marketplace for online courses. Individual course purchases with lifetime access.',
+    hasApi: true,
+    apiDocsUrl: 'https://www.udemy.com/developers/',
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: false,
+      canGetPlaybackUrl: false,
+      canSearchContent: true,
+      canGetTranscripts: false,
+      rateLimitPerHour: 500,
+      authType: 'api_key',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'pt', 'de', 'fr', 'ja', 'ko', 'tr'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: 'hd',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'nebula',
+    name: 'Nebula',
+    slug: 'nebula',
+    type: 'subscription',
+    logoUrl: 'https://nebula.tv/favicon.ico',
+    websiteUrl: 'https://nebula.tv',
+    description: 'Creator-owned streaming platform with educational content. Ad-free, exclusive content.',
+    hasApi: false,
+    supportsSubtitles: true,
+    supportedLanguages: ['en'],
+    supportsDownload: false,
+    supportsOffline: false,
+    averageVideoQuality: '4k',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'curiositystream',
+    name: 'CuriosityStream',
+    slug: 'curiositystream',
+    type: 'subscription',
+    logoUrl: 'https://curiositystream.com/favicon.ico',
+    websiteUrl: 'https://curiositystream.com',
+    description: 'Documentary streaming service focused on science, nature, history, and technology.',
+    hasApi: false,
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'de', 'fr'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: '4k',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'linkedin-learning',
+    name: 'LinkedIn Learning',
+    slug: 'linkedin-learning',
+    type: 'subscription',
+    logoUrl: 'https://www.linkedin.com/favicon.ico',
+    websiteUrl: 'https://www.linkedin.com/learning',
+    description: 'Professional development courses. Often included with LinkedIn Premium.',
+    hasApi: true,
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: true,
+      canGetPlaybackUrl: false,
+      canSearchContent: true,
+      canGetTranscripts: true,
+      rateLimitPerHour: 1000,
+      authType: 'oauth',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'fr', 'de', 'ja', 'pt', 'zh'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: 'hd',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'edx',
+    name: 'edX',
+    slug: 'edx',
+    type: 'educational',
+    logoUrl: 'https://www.edx.org/favicon.ico',
+    websiteUrl: 'https://www.edx.org',
+    description: 'University-level courses from MIT, Harvard, and other institutions.',
+    hasApi: true,
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: true,
+      canGetPlaybackUrl: false,
+      canSearchContent: true,
+      canGetTranscripts: true,
+      rateLimitPerHour: 500,
+      authType: 'oauth',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en', 'es', 'fr', 'zh', 'ar'],
+    supportsDownload: false,
+    supportsOffline: false,
+    averageVideoQuality: 'hd',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'pluralsight',
+    name: 'Pluralsight',
+    slug: 'pluralsight',
+    type: 'subscription',
+    logoUrl: 'https://www.pluralsight.com/favicon.ico',
+    websiteUrl: 'https://www.pluralsight.com',
+    description: 'Technology skills platform for software developers and IT professionals.',
+    hasApi: true,
+    apiCapabilities: {
+      canFetchMetadata: true,
+      canVerifyAccess: true,
+      canGetPlaybackUrl: false,
+      canSearchContent: true,
+      canGetTranscripts: true,
+      rateLimitPerHour: 1000,
+      authType: 'oauth',
+    },
+    supportsSubtitles: true,
+    supportedLanguages: ['en'],
+    supportsDownload: true,
+    supportsOffline: true,
+    averageVideoQuality: 'hd',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
 ];
 
 // Surveys
@@ -189,7 +457,7 @@ export const requests: Request[] = [
     userId: '1',
     title: 'Curated AI/ML Videos',
     description: 'I need 10 curated videos about AI and machine learning for beginners',
-    type: 'video_curation',
+    type: 'video_recommendation',
     criteria: ['AI', 'Machine Learning', 'Beginner-friendly', 'Recent (2025-2026)'],
     tags: ['AI', 'Machine Learning', 'Beginner'],
     status: 'completed',
@@ -229,7 +497,7 @@ export const requests: Request[] = [
     userId: '1',
     title: 'Python Learning Path',
     description: 'Looking for a structured learning path to master Python for data science',
-    type: 'advice',
+    type: 'learning_path',
     criteria: ['Python', 'Data Science', 'Structured curriculum', 'Practical projects'],
     tags: ['Python', 'Data Science', 'Tutorial'],
     status: 'in_progress',
@@ -243,7 +511,7 @@ export const requests: Request[] = [
     userId: '5',
     title: 'Business Analytics Tools',
     description: 'Need recommendations for learning business analytics and visualization tools',
-    type: 'article_curation',
+    type: 'topic_research',
     criteria: ['Business Analytics', 'Data Visualization', 'Excel', 'Tableau'],
     tags: ['Business', 'Analytics', 'Beginner'],
     status: 'pending',
@@ -262,7 +530,9 @@ export const userProfiles: UserProfile[] = [
       learningStyle: 'visual',
       contentLength: 'medium',
       difficulty: 'beginner',
-      preferredFormats: ['Video', 'Interactive'],
+      preferredPlatforms: ['youtube', 'coursera'],
+      preferredLanguages: ['en'],
+      subtitlePreference: 'same_language',
       notificationSettings: {
         email: true,
         push: true,
@@ -277,7 +547,7 @@ export const userProfiles: UserProfile[] = [
       {
         requestId: '1',
         title: 'Curated AI/ML Videos',
-        type: 'video_curation',
+        type: 'video_recommendation',
         status: 'completed',
         createdAt: new Date('2026-01-16'),
         completedAt: new Date('2026-01-20'),
@@ -285,7 +555,7 @@ export const userProfiles: UserProfile[] = [
       {
         requestId: '2',
         title: 'Python Learning Path',
-        type: 'advice',
+        type: 'learning_path',
         status: 'in_progress',
         createdAt: new Date('2026-01-25'),
       },
@@ -300,7 +570,8 @@ export const userProfiles: UserProfile[] = [
       learningStyle: 'reading',
       contentLength: 'short',
       difficulty: 'beginner',
-      preferredFormats: ['Article'],
+      preferredPlatforms: ['youtube', 'udemy'],
+      preferredLanguages: ['en'],
     },
     surveyData: {
       '2': surveys[1].responses,
@@ -309,7 +580,7 @@ export const userProfiles: UserProfile[] = [
       {
         requestId: '3',
         title: 'Business Analytics Tools',
-        type: 'article_curation',
+        type: 'topic_research',
         status: 'pending',
         createdAt: new Date('2026-01-28'),
       },
@@ -444,130 +715,525 @@ export const knowledgeEntries: KnowledgeEntry[] = [
 knowledgeBases[0].entries = knowledgeEntries.filter(e => e.knowledgeBaseId === 'kb1');
 knowledgeBases[1].entries = knowledgeEntries.filter(e => e.knowledgeBaseId === 'kb2');
 
-// Content Items (Analyst-curated)
-export const contentItems: ContentItem[] = [
+// Video Sources (per-platform URLs)
+export const videoSources: VideoSource[] = [
+  // 3Blue1Brown Neural Networks - available on YouTube and Nebula
   {
-    id: 'content1',
+    id: 'vs1-yt',
+    videoId: 'video1',
+    platformId: 'youtube',
+    url: 'https://www.youtube.com/watch?v=aircAruvnKk',
+    platformVideoId: 'aircAruvnKk',
+    embedUrl: 'https://www.youtube.com/embed/aircAruvnKk',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['360p', '480p', '720p', '1080p', '4k'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'fr', 'de', 'ja', 'ko', 'zh'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-08'),
+    updatedAt: new Date('2026-01-28'),
+  },
+  {
+    id: 'vs1-nebula',
+    videoId: 'video1',
+    platformId: 'nebula',
+    url: 'https://nebula.tv/videos/3blue1brown-neural-networks',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['720p', '1080p', '4k'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-08'),
+    updatedAt: new Date('2026-01-28'),
+  },
+  // StatQuest ML Fundamentals - YouTube only
+  {
+    id: 'vs2-yt',
+    videoId: 'video2',
+    platformId: 'youtube',
+    url: 'https://www.youtube.com/watch?v=Gv9_4yMHFhI',
+    platformVideoId: 'Gv9_4yMHFhI',
+    embedUrl: 'https://www.youtube.com/embed/Gv9_4yMHFhI',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['360p', '480p', '720p', '1080p'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'pt'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-09'),
+    updatedAt: new Date('2026-01-28'),
+  },
+  // Andrew Ng's ML Course - Coursera and YouTube (partial)
+  {
+    id: 'vs3-coursera',
+    videoId: 'video3',
+    platformId: 'coursera',
+    url: 'https://www.coursera.org/learn/machine-learning',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['720p', '1080p'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'fr', 'de', 'zh', 'ar', 'ru'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-10'),
+    updatedAt: new Date('2026-01-28'),
+  },
+  {
+    id: 'vs3-yt',
+    videoId: 'video3',
+    platformId: 'youtube',
+    url: 'https://www.youtube.com/playlist?list=PLLssT5z_DsK-h9vYZkQkYNWcItqhlRJLN',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['360p', '480p', '720p'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-10'),
+    updatedAt: new Date('2026-01-28'),
+  },
+  // Transformer documentary - Netflix and CuriosityStream
+  {
+    id: 'vs4-netflix',
+    videoId: 'video4',
+    platformId: 'netflix',
+    url: 'https://www.netflix.com/title/81234567',
+    platformVideoId: '81234567',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-25'),
+    availableQualities: ['720p', '1080p', '4k'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'fr', 'de', 'ja', 'ko', 'pt', 'zh'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-15'),
+    updatedAt: new Date('2026-01-25'),
+  },
+  {
+    id: 'vs4-curiosity',
+    videoId: 'video4',
+    platformId: 'curiositystream',
+    url: 'https://curiositystream.com/video/ai-revolution',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-25'),
+    availableQualities: ['720p', '1080p', '4k'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'de'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-15'),
+    updatedAt: new Date('2026-01-25'),
+  },
+  // Python Data Science course - Udemy and LinkedIn Learning
+  {
+    id: 'vs5-udemy',
+    videoId: 'video5',
+    platformId: 'udemy',
+    url: 'https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['720p', '1080p'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'pt', 'de'],
+    price: 84.99,
+    currency: 'USD',
+    platformNotes: [],
+    createdAt: new Date('2026-01-12'),
+    updatedAt: new Date('2026-01-28'),
+  },
+  {
+    id: 'vs5-linkedin',
+    videoId: 'video5',
+    platformId: 'linkedin-learning',
+    url: 'https://www.linkedin.com/learning/python-for-data-science-essential-training',
+    isAvailable: true,
+    lastVerified: new Date('2026-01-28'),
+    availableQualities: ['720p', '1080p'],
+    hasSubtitles: true,
+    subtitleLanguages: ['en', 'es', 'fr', 'de', 'ja', 'pt', 'zh'],
+    platformNotes: [],
+    createdAt: new Date('2026-01-12'),
+    updatedAt: new Date('2026-01-28'),
+  },
+];
+
+// Platform Notes (analyst observations about platform differences)
+export const platformNotes: PlatformNote[] = [
+  {
+    id: 'pn1',
+    videoSourceId: 'vs1-nebula',
     analystId: '3',
-    url: 'https://youtube.com/watch?v=example1',
-    title: '3Blue1Brown: Neural Networks',
-    description: 'Visual introduction to neural networks using excellent animations',
-    contentType: 'video',
-    source: 'YouTube',
+    noteType: 'quality',
+    title: 'Ad-free experience on Nebula',
+    description: 'Nebula version has no ads and includes extended creator commentary at the end.',
+    comparedToPlatformId: 'youtube',
+    rating: 5,
+    differences: [
+      {
+        type: 'bonus_content',
+        description: 'Includes 5-minute extended commentary from Grant Sanderson',
+        severity: 'minor',
+      },
+    ],
+    createdAt: new Date('2026-01-09'),
+    updatedAt: new Date('2026-01-09'),
+  },
+  {
+    id: 'pn2',
+    videoSourceId: 'vs3-coursera',
+    analystId: '3',
+    noteType: 'recommendation',
+    title: 'Coursera preferred for structured learning',
+    description: 'Coursera version includes quizzes, assignments, and certificates. Better for users who want structured accountability.',
+    comparedToPlatformId: 'youtube',
+    rating: 5,
+    differences: [
+      {
+        type: 'bonus_content',
+        description: 'Includes graded assignments and peer reviews',
+        severity: 'significant',
+      },
+      {
+        type: 'bonus_content',
+        description: 'Offers verified certificate upon completion',
+        severity: 'moderate',
+      },
+    ],
+    createdAt: new Date('2026-01-11'),
+    updatedAt: new Date('2026-01-11'),
+  },
+  {
+    id: 'pn3',
+    videoSourceId: 'vs3-yt',
+    analystId: '3',
+    noteType: 'content_difference',
+    title: 'YouTube version is older recording',
+    description: 'The YouTube playlist is from the original 2012 Stanford course. Coursera has updated content from 2022.',
+    comparedToPlatformId: 'coursera',
+    rating: 3,
+    differences: [
+      {
+        type: 'content_cut',
+        description: 'Missing newer topics like transformers and modern deep learning',
+        severity: 'significant',
+      },
+      {
+        type: 'quality',
+        description: 'Lower video quality (SD) compared to Coursera HD',
+        severity: 'moderate',
+      },
+    ],
+    createdAt: new Date('2026-01-11'),
+    updatedAt: new Date('2026-01-11'),
+  },
+  {
+    id: 'pn4',
+    videoSourceId: 'vs4-curiosity',
+    analystId: '4',
+    noteType: 'subtitle',
+    title: 'Fewer subtitle options',
+    description: 'CuriosityStream has fewer subtitle languages than Netflix version.',
+    comparedToPlatformId: 'netflix',
+    rating: 4,
+    differences: [
+      {
+        type: 'subtitles',
+        description: 'Missing Japanese, Korean, Portuguese, and Chinese subtitles',
+        severity: 'moderate',
+      },
+    ],
+    createdAt: new Date('2026-01-16'),
+    updatedAt: new Date('2026-01-16'),
+  },
+  {
+    id: 'pn5',
+    videoSourceId: 'vs5-udemy',
+    analystId: '3',
+    noteType: 'recommendation',
+    title: 'Better value with frequent sales',
+    description: 'Udemy courses go on sale frequently (often $15-20). Wait for a sale rather than paying full price.',
+    rating: 4,
+    createdAt: new Date('2026-01-13'),
+    updatedAt: new Date('2026-01-13'),
+  },
+  {
+    id: 'pn6',
+    videoSourceId: 'vs5-linkedin',
+    analystId: '4',
+    noteType: 'content_difference',
+    title: 'Different instructor and approach',
+    description: 'LinkedIn Learning version has different instructor. More concise but less comprehensive than Udemy version.',
+    comparedToPlatformId: 'udemy',
+    rating: 4,
+    differences: [
+      {
+        type: 'duration',
+        description: 'LinkedIn version is ~10 hours vs Udemy ~25 hours',
+        severity: 'significant',
+      },
+      {
+        type: 'content_cut',
+        description: 'Fewer hands-on projects and exercises',
+        severity: 'moderate',
+      },
+    ],
+    createdAt: new Date('2026-01-13'),
+    updatedAt: new Date('2026-01-13'),
+  },
+];
+
+// Update video sources with platform notes
+videoSources[1].platformNotes = platformNotes.filter(pn => pn.videoSourceId === 'vs1-nebula');
+videoSources[3].platformNotes = platformNotes.filter(pn => pn.videoSourceId === 'vs3-coursera');
+videoSources[4].platformNotes = platformNotes.filter(pn => pn.videoSourceId === 'vs3-yt');
+videoSources[6].platformNotes = platformNotes.filter(pn => pn.videoSourceId === 'vs4-curiosity');
+videoSources[7].platformNotes = platformNotes.filter(pn => pn.videoSourceId === 'vs5-udemy');
+videoSources[8].platformNotes = platformNotes.filter(pn => pn.videoSourceId === 'vs5-linkedin');
+
+// Videos (Analyst-curated)
+export const videos: Video[] = [
+  {
+    id: 'video1',
+    analystId: '3',
+    title: 'Neural Networks - 3Blue1Brown',
+    description: 'Visual introduction to neural networks using excellent animations. Part of the deep learning series.',
+    category: 'tutorial',
+    sources: videoSources.filter(vs => vs.videoId === 'video1'),
+    primarySourceId: 'vs1-yt',
+    duration: 1200,
+    language: 'en',
+    hasTranscript: true,
+    creator: {
+      name: '3Blue1Brown (Grant Sanderson)',
+      channelUrl: 'https://www.youtube.com/c/3blue1brown',
+      platformChannelIds: { youtube: 'UCYO_jab_esuFRV4b17AJtAw', nebula: '3blue1brown' },
+      verified: true,
+      expertise: ['Mathematics', 'Visual Learning', 'Neural Networks'],
+    },
+    publishedDate: new Date('2025-06-15'),
     tags: [tags[0], tags[1], tags[4], tags[7]],
-    annotations: [],
+    topics: ['Neural Networks', 'Deep Learning', 'Machine Learning Basics'],
+    difficulty: 'beginner',
+    targetAudience: ['Visual learners', 'Math enthusiasts', 'ML beginners'],
     status: 'approved',
     qualityScore: 4.8,
-    relevanceAreas: ['AI', 'Machine Learning', 'Beginner Education'],
-    metadata: {
-      author: '3Blue1Brown',
-      publishedDate: new Date('2025-06-15'),
-      duration: 1200,
-      difficulty: 'beginner',
-      language: 'English',
-      thumbnail: 'https://example.com/thumb1.jpg',
-    },
+    expertRatings: [
+      {
+        id: 'er1',
+        videoId: 'video1',
+        expertId: '2',
+        overallRating: 5,
+        contentAccuracy: 5,
+        productionQuality: 5,
+        explanationClarity: 5,
+        practicalValue: 4,
+        review: 'Best visual explanation of neural networks available. Perfect for visual learners.',
+        recommendedFor: ['visual learners', 'beginners', 'math-curious'],
+        createdAt: new Date('2026-01-10'),
+      },
+    ],
+    annotations: [],
+    relatedVideoIds: ['video2', 'video3'],
+    thumbnailUrl: 'https://i.ytimg.com/vi/aircAruvnKk/maxresdefault.jpg',
     createdAt: new Date('2026-01-08'),
     updatedAt: new Date('2026-01-10'),
     reviewedAt: new Date('2026-01-10'),
     reviewedBy: '2',
   },
   {
-    id: 'content2',
+    id: 'video2',
     analystId: '3',
-    url: 'https://youtube.com/watch?v=example2',
-    title: 'StatQuest: Machine Learning Fundamentals',
-    description: 'Clear statistical explanations of ML concepts with humor',
-    contentType: 'video',
-    source: 'YouTube',
+    title: 'Machine Learning Fundamentals - StatQuest',
+    description: 'Clear statistical explanations of ML concepts with humor. Great for building intuition.',
+    category: 'tutorial',
+    sources: videoSources.filter(vs => vs.videoId === 'video2'),
+    primarySourceId: 'vs2-yt',
+    duration: 900,
+    language: 'en',
+    hasTranscript: true,
+    creator: {
+      name: 'StatQuest (Josh Starmer)',
+      channelUrl: 'https://www.youtube.com/c/joshstarmer',
+      platformChannelIds: { youtube: 'UCtYLUTtgS3k1Fg4y5tAhLbw' },
+      verified: true,
+      expertise: ['Statistics', 'Machine Learning', 'Biostatistics'],
+    },
+    publishedDate: new Date('2025-08-20'),
     tags: [tags[1], tags[4], tags[7]],
-    annotations: [],
+    topics: ['Machine Learning', 'Statistics', 'Fundamentals'],
+    difficulty: 'beginner',
+    targetAudience: ['Statistics learners', 'ML beginners'],
     status: 'approved',
     qualityScore: 4.9,
-    relevanceAreas: ['Machine Learning', 'Statistics', 'Beginner Education'],
-    metadata: {
-      author: 'StatQuest',
-      publishedDate: new Date('2025-08-20'),
-      duration: 900,
-      difficulty: 'beginner',
-      language: 'English',
-    },
+    expertRatings: [
+      {
+        id: 'er2',
+        videoId: 'video2',
+        expertId: '2',
+        overallRating: 5,
+        contentAccuracy: 5,
+        productionQuality: 4,
+        explanationClarity: 5,
+        practicalValue: 5,
+        review: 'Josh makes statistics fun and accessible. Essential for anyone learning ML.',
+        recommendedFor: ['statistics beginners', 'anyone intimidated by math'],
+        notRecommendedFor: ['those seeking advanced theory'],
+        createdAt: new Date('2026-01-11'),
+      },
+    ],
+    annotations: [],
+    relatedVideoIds: ['video1'],
     createdAt: new Date('2026-01-09'),
     updatedAt: new Date('2026-01-11'),
     reviewedAt: new Date('2026-01-11'),
     reviewedBy: '2',
   },
   {
-    id: 'content3',
+    id: 'video3',
     analystId: '3',
-    url: 'https://realpython.com/python-data-science',
-    title: 'Real Python: Data Science with Python',
-    description: 'Comprehensive guide to Python for data science applications',
-    contentType: 'article',
-    source: 'Real Python',
-    tags: [tags[3], tags[8], tags[5]],
+    title: 'Machine Learning Course - Andrew Ng',
+    description: 'The classic introductory ML course from Stanford. Comprehensive coverage of ML fundamentals.',
+    category: 'course',
+    sources: videoSources.filter(vs => vs.videoId === 'video3'),
+    primarySourceId: 'vs3-coursera',
+    duration: 60 * 60 * 60, // ~60 hours
+    language: 'en',
+    hasTranscript: true,
+    creator: {
+      name: 'Andrew Ng',
+      channelUrl: 'https://www.coursera.org/instructor/andrewng',
+      platformChannelIds: { coursera: 'andrewng', youtube: 'UCcIXc5mJsHVYTZR1maL5l9w' },
+      verified: true,
+      expertise: ['Machine Learning', 'Deep Learning', 'AI Research'],
+    },
+    publishedDate: new Date('2022-06-01'),
+    tags: [tags[1], tags[4], tags[7]],
+    topics: ['Machine Learning', 'Supervised Learning', 'Unsupervised Learning', 'Neural Networks'],
+    difficulty: 'beginner',
+    targetAudience: ['Career changers', 'CS students', 'Self-learners'],
+    prerequisites: ['Basic programming', 'High school math'],
+    status: 'approved',
+    qualityScore: 5.0,
+    expertRatings: [
+      {
+        id: 'er3',
+        videoId: 'video3',
+        expertId: '4',
+        overallRating: 5,
+        contentAccuracy: 5,
+        productionQuality: 5,
+        explanationClarity: 5,
+        practicalValue: 5,
+        review: 'The gold standard for ML education. Transformed the industry.',
+        recommendedFor: ['serious learners', 'career changers', 'anyone wanting certificates'],
+        createdAt: new Date('2026-01-12'),
+      },
+    ],
     annotations: [],
+    relatedVideoIds: ['video1', 'video2', 'video5'],
+    thumbnailUrl: 'https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/coursera-course-photos/ml.jpg',
+    createdAt: new Date('2026-01-10'),
+    updatedAt: new Date('2026-01-12'),
+    reviewedAt: new Date('2026-01-12'),
+    reviewedBy: '4',
+  },
+  {
+    id: 'video4',
+    analystId: '4',
+    title: 'The AI Revolution: From Theory to Practice',
+    description: 'Documentary exploring the history and future of artificial intelligence.',
+    category: 'documentary',
+    sources: videoSources.filter(vs => vs.videoId === 'video4'),
+    primarySourceId: 'vs4-netflix',
+    duration: 90 * 60, // 90 minutes
+    language: 'en',
+    hasTranscript: true,
+    creator: {
+      name: 'Tech Documentaries Inc.',
+      verified: false,
+    },
+    publishedDate: new Date('2025-09-15'),
+    tags: [tags[0], tags[2], tags[6]],
+    topics: ['AI History', 'Deep Learning', 'AI Ethics', 'Future of AI'],
+    difficulty: 'all_levels',
+    targetAudience: ['General audience', 'Tech enthusiasts', 'Business leaders'],
     status: 'approved',
     qualityScore: 4.5,
-    relevanceAreas: ['Python', 'Data Science', 'Tutorials'],
-    metadata: {
-      author: 'Real Python Team',
-      publishedDate: new Date('2025-10-01'),
-      wordCount: 5000,
-      difficulty: 'intermediate',
-      language: 'English',
+    expertRatings: [
+      {
+        id: 'er4',
+        videoId: 'video4',
+        expertId: '2',
+        overallRating: 4,
+        contentAccuracy: 4,
+        productionQuality: 5,
+        explanationClarity: 5,
+        practicalValue: 3,
+        review: 'Excellent production value and accessible to non-technical audiences. Some oversimplifications.',
+        recommendedFor: ['general audience', 'executives', 'those new to AI'],
+        notRecommendedFor: ['those seeking technical depth'],
+        createdAt: new Date('2026-01-16'),
+      },
+    ],
+    annotations: [],
+    relatedVideoIds: [],
+    createdAt: new Date('2026-01-15'),
+    updatedAt: new Date('2026-01-16'),
+    reviewedAt: new Date('2026-01-16'),
+    reviewedBy: '2',
+  },
+  {
+    id: 'video5',
+    analystId: '3',
+    title: 'Python for Data Science Bootcamp',
+    description: 'Comprehensive course covering Python programming for data science applications.',
+    category: 'course',
+    sources: videoSources.filter(vs => vs.videoId === 'video5'),
+    primarySourceId: 'vs5-udemy',
+    duration: 25 * 60 * 60, // ~25 hours
+    language: 'en',
+    hasTranscript: true,
+    creator: {
+      name: 'Jose Portilla',
+      channelUrl: 'https://www.udemy.com/user/joseportilla/',
+      platformChannelIds: { udemy: 'joseportilla' },
+      verified: true,
+      expertise: ['Python', 'Data Science', 'Machine Learning'],
     },
+    publishedDate: new Date('2025-03-10'),
+    tags: [tags[3], tags[8], tags[5]],
+    topics: ['Python', 'Data Science', 'Pandas', 'NumPy', 'Matplotlib', 'Machine Learning'],
+    difficulty: 'beginner',
+    targetAudience: ['Career changers', 'Analysts', 'Self-learners'],
+    prerequisites: ['None - starts from basics'],
+    status: 'approved',
+    qualityScore: 4.6,
+    expertRatings: [
+      {
+        id: 'er5',
+        videoId: 'video5',
+        expertId: '4',
+        overallRating: 5,
+        contentAccuracy: 5,
+        productionQuality: 4,
+        explanationClarity: 5,
+        practicalValue: 5,
+        review: 'Excellent comprehensive course. Best value for money on Udemy during sales.',
+        recommendedFor: ['complete beginners', 'career changers'],
+        createdAt: new Date('2026-01-14'),
+      },
+    ],
+    annotations: [],
+    relatedVideoIds: ['video3'],
     createdAt: new Date('2026-01-12'),
     updatedAt: new Date('2026-01-14'),
     reviewedAt: new Date('2026-01-14'),
     reviewedBy: '4',
   },
-  {
-    id: 'content4',
-    analystId: '4',
-    url: 'https://arxiv.org/abs/example',
-    title: 'Attention Is All You Need - Transformer Paper',
-    description: 'The foundational paper introducing the Transformer architecture',
-    contentType: 'paper',
-    source: 'arXiv',
-    tags: [tags[0], tags[2], tags[6]],
-    annotations: [],
-    status: 'approved',
-    qualityScore: 5.0,
-    relevanceAreas: ['AI', 'Deep Learning', 'NLP', 'Research'],
-    metadata: {
-      author: 'Vaswani et al.',
-      publishedDate: new Date('2017-06-12'),
-      difficulty: 'advanced',
-      language: 'English',
-    },
-    createdAt: new Date('2026-01-05'),
-    updatedAt: new Date('2026-01-05'),
-    reviewedAt: new Date('2026-01-06'),
-    reviewedBy: '2',
-  },
-  {
-    id: 'content5',
-    analystId: '3',
-    url: 'https://coursera.org/learn/machine-learning',
-    title: 'Machine Learning Course by Andrew Ng',
-    description: 'The classic introductory ML course from Stanford',
-    contentType: 'course',
-    source: 'Coursera',
-    tags: [tags[1], tags[4], tags[7]],
-    annotations: [],
-    status: 'pending',
-    relevanceAreas: ['Machine Learning', 'Education', 'Structured Learning'],
-    metadata: {
-      author: 'Andrew Ng',
-      duration: 60 * 60 * 60, // ~60 hours
-      difficulty: 'beginner',
-      language: 'English',
-    },
-    createdAt: new Date('2026-01-20'),
-    updatedAt: new Date('2026-01-20'),
-  },
 ];
+
+// Legacy alias for backwards compatibility
+export const contentItems = videos;
 
 // Annotations on content
 export const annotations: Annotation[] = [
@@ -982,22 +1648,22 @@ export function searchKnowledgeEntries(query: string, tags?: string[]): Knowledg
   });
 }
 
-// Content functions
-export function getContentItems(filters?: { status?: string; contentType?: string; analystId?: string }): ContentItem[] {
-  return contentItems.filter(item => {
+// Content functions (using Video type)
+export function getContentItems(filters?: { status?: string; category?: string; analystId?: string }): Video[] {
+  return videos.filter(item => {
     if (filters?.status && item.status !== filters.status) return false;
-    if (filters?.contentType && item.contentType !== filters.contentType) return false;
+    if (filters?.category && item.category !== filters.category) return false;
     if (filters?.analystId && item.analystId !== filters.analystId) return false;
     return true;
   });
 }
 
-export function getContentItemById(id: string): ContentItem | undefined {
-  return contentItems.find(item => item.id === id);
+export function getContentItemById(id: string): Video | undefined {
+  return videos.find(item => item.id === id);
 }
 
-export function searchContentItems(query: string, tags?: string[]): ContentItem[] {
-  return contentItems.filter(item => {
+export function searchContentItems(query: string, tags?: string[]): Video[] {
+  return videos.filter(item => {
     const matchesQuery = !query ||
       item.title.toLowerCase().includes(query.toLowerCase()) ||
       item.description.toLowerCase().includes(query.toLowerCase());
@@ -1092,5 +1758,127 @@ export function getAnalystStats(analystId: string) {
     approved: analystContent.filter(c => c.status === 'approved').length,
     pending: analystContent.filter(c => c.status === 'pending').length,
     averageQuality: analystContent.reduce((sum, c) => sum + (c.qualityScore || 0), 0) / analystContent.length || 0,
+  };
+}
+
+// ============================================
+// Platform Functions
+// ============================================
+
+export function getAllPlatforms(): Platform[] {
+  return platforms;
+}
+
+export function getPlatformById(id: string): Platform | undefined {
+  return platforms.find(p => p.id === id);
+}
+
+export function getPlatformBySlug(slug: string): Platform | undefined {
+  return platforms.find(p => p.slug === slug);
+}
+
+export function getPlatformsByType(type: string): Platform[] {
+  return platforms.filter(p => p.type === type);
+}
+
+export function getPlatformsWithApi(): Platform[] {
+  return platforms.filter(p => p.hasApi);
+}
+
+export function getUserPlatforms(userId: string): Platform[] {
+  const user = getUserById(userId);
+  if (!user) return [];
+  return platforms.filter(p => user.platformSubscriptions.includes(p.id));
+}
+
+// ============================================
+// Video Functions
+// ============================================
+
+export function getAllVideos(): Video[] {
+  return videos;
+}
+
+export function getVideoById(id: string): Video | undefined {
+  return videos.find(v => v.id === id);
+}
+
+export function getVideosByCategory(category: string): Video[] {
+  return videos.filter(v => v.category === category);
+}
+
+export function getVideosByDifficulty(difficulty: string): Video[] {
+  return videos.filter(v => v.difficulty === difficulty);
+}
+
+export function getVideosForUser(userId: string): Video[] {
+  const userPlatformIds = getUserById(userId)?.platformSubscriptions || [];
+  return videos.filter(v =>
+    v.sources.some(s => userPlatformIds.includes(s.platformId) && s.isAvailable)
+  );
+}
+
+export function getVideoSourcesForUser(videoId: string, userId: string): VideoSource[] {
+  const video = getVideoById(videoId);
+  if (!video) return [];
+
+  const userPlatformIds = getUserById(userId)?.platformSubscriptions || [];
+  return video.sources.filter(s =>
+    userPlatformIds.includes(s.platformId) && s.isAvailable
+  );
+}
+
+export function getVideoSourceById(id: string): VideoSource | undefined {
+  return videoSources.find(vs => vs.id === id);
+}
+
+export function getVideoSourcesByVideoId(videoId: string): VideoSource[] {
+  return videoSources.filter(vs => vs.videoId === videoId);
+}
+
+export function getPlatformNotesForSource(videoSourceId: string): PlatformNote[] {
+  return platformNotes.filter(pn => pn.videoSourceId === videoSourceId);
+}
+
+export function getRecommendedSourceForUser(videoId: string, userId: string): VideoSource | undefined {
+  const availableSources = getVideoSourcesForUser(videoId, userId);
+  if (availableSources.length === 0) return undefined;
+
+  // Prefer the primary source if available to user
+  const video = getVideoById(videoId);
+  if (video?.primarySourceId) {
+    const primary = availableSources.find(s => s.id === video.primarySourceId);
+    if (primary) return primary;
+  }
+
+  // Otherwise return the first available source
+  return availableSources[0];
+}
+
+export function checkVideoAvailabilityForUser(videoId: string, userId: string): {
+  available: boolean;
+  sources: VideoSource[];
+  unavailablePlatforms: Platform[];
+} {
+  const video = getVideoById(videoId);
+  if (!video) return { available: false, sources: [], unavailablePlatforms: [] };
+
+  const userPlatformIds = getUserById(userId)?.platformSubscriptions || [];
+  const availableSources = video.sources.filter(s =>
+    userPlatformIds.includes(s.platformId) && s.isAvailable
+  );
+
+  const unavailablePlatformIds = video.sources
+    .filter(s => !userPlatformIds.includes(s.platformId))
+    .map(s => s.platformId);
+
+  const unavailablePlatforms = platforms.filter(p =>
+    unavailablePlatformIds.includes(p.id)
+  );
+
+  return {
+    available: availableSources.length > 0,
+    sources: availableSources,
+    unavailablePlatforms,
   };
 }

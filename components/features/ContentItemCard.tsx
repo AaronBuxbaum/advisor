@@ -1,15 +1,15 @@
 'use client';
 
-import { ContentItem } from '@/types';
+import { Video, VideoSource } from '@/types';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge, StatusBadge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 
 interface ContentItemCardProps {
-  content: ContentItem;
+  content: Video;
   onView?: (id: string) => void;
   onEdit?: (id: string) => void;
   showAnnotations?: boolean;
+  userPlatforms?: string[];
 }
 
 export function ContentItemCard({
@@ -17,14 +17,17 @@ export function ContentItemCard({
   onView,
   onEdit,
   showAnnotations = false,
+  userPlatforms = [],
 }: ContentItemCardProps) {
-  const contentTypeIcons: Record<string, string> = {
-    video: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z',
-    article: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
-    paper: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
-    tutorial: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z',
-    tool: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
+  const categoryIcons: Record<string, string> = {
+    tutorial: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z',
+    lecture: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+    documentary: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z',
     course: 'M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9 5 9-5-9 5z',
+    talk: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+    workshop: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z',
+    review: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
+    entertainment: 'M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z',
     other: 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z',
   };
 
@@ -35,6 +38,14 @@ export function ContentItemCard({
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
   };
+
+  // Get primary source or first available source
+  const primarySource = content.sources.find(s => s.id === content.primarySourceId) || content.sources[0];
+
+  // Check which sources are available to the user
+  const availableSources = content.sources.filter(s =>
+    userPlatforms.length === 0 || userPlatforms.includes(s.platformId)
+  );
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -52,7 +63,7 @@ export function ContentItemCard({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d={contentTypeIcons[content.contentType] || contentTypeIcons.other}
+                d={categoryIcons[content.category] || categoryIcons.other}
               />
             </svg>
           </div>
@@ -67,19 +78,13 @@ export function ContentItemCard({
 
             {/* Metadata */}
             <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 mb-2">
-              <span className="capitalize">{content.contentType}</span>
+              <span className="capitalize">{content.category}</span>
               <span>•</span>
-              <span>{content.source}</span>
-              {content.metadata.author && (
+              <span>{content.creator.name}</span>
+              {content.duration && (
                 <>
                   <span>•</span>
-                  <span>by {content.metadata.author}</span>
-                </>
-              )}
-              {content.metadata.duration && (
-                <>
-                  <span>•</span>
-                  <span>{formatDuration(content.metadata.duration)}</span>
+                  <span>{formatDuration(content.duration)}</span>
                 </>
               )}
               {content.qualityScore && (
@@ -90,6 +95,20 @@ export function ContentItemCard({
                   </span>
                 </>
               )}
+            </div>
+
+            {/* Platform availability */}
+            <div className="flex flex-wrap items-center gap-1 mb-2">
+              <span className="text-xs text-gray-500">Available on:</span>
+              {content.sources.map((source) => (
+                <Badge
+                  key={source.id}
+                  variant={availableSources.includes(source) ? 'success' : 'default'}
+                  size="sm"
+                >
+                  {source.platformId}
+                </Badge>
+              ))}
             </div>
 
             {/* Tags */}
@@ -115,14 +134,16 @@ export function ContentItemCard({
 
             {/* Actions */}
             <div className="flex gap-2 mt-2">
-              <a
-                href={content.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 text-sm"
-              >
-                Open Link
-              </a>
+              {primarySource && (
+                <a
+                  href={primarySource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  Watch Video
+                </a>
+              )}
               {onView && (
                 <button
                   onClick={() => onView(content.id)}

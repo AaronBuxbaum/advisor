@@ -1,30 +1,23 @@
 import type {
   User,
-  UserProfile,
   UserRole,
-  Survey,
   Request,
   RequestType,
   RequestStatus,
   RequestPriority,
-  KnowledgeBase,
-  KnowledgeEntry,
-  ContentItem,
-  ContentType,
-  ContentStatus,
+  Video,
+  VideoCategory,
+  VideoStatus,
+  Platform,
+  VideoSource,
   Tag,
-  Annotation,
   AnnotationType,
   Project,
   ProjectStatus,
-  Task,
-  Comment,
   Notification,
   NotificationType,
   AISuggestion,
   AISuggestionType,
-  ContentFeedback,
-  ResearchRequest,
 } from '@/types';
 
 describe('Type Definitions', () => {
@@ -37,6 +30,7 @@ describe('Type Definitions', () => {
         role: 'user',
         roles: ['user'],
         subscriptionStatus: 'active',
+        platformSubscriptions: ['youtube', 'netflix'],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -44,6 +38,7 @@ describe('Type Definitions', () => {
       expect(user.id).toBe('1');
       expect(user.role).toBe('user');
       expect(user.roles).toContain('user');
+      expect(user.platformSubscriptions).toContain('youtube');
     });
 
     it('should support multiple roles', () => {
@@ -54,6 +49,7 @@ describe('Type Definitions', () => {
         role: 'expert',
         roles: ['expert', 'analyst'],
         subscriptionStatus: 'active',
+        platformSubscriptions: ['youtube', 'coursera', 'udemy'],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -70,6 +66,7 @@ describe('Type Definitions', () => {
         role: 'expert',
         roles: ['expert'],
         subscriptionStatus: 'active',
+        platformSubscriptions: ['youtube'],
         bio: 'Expert bio',
         expertise: ['AI', 'ML'],
         avatarUrl: 'https://example.com/avatar.jpg',
@@ -84,7 +81,7 @@ describe('Type Definitions', () => {
 
   describe('Request types', () => {
     it('should correctly type request types', () => {
-      const types: RequestType[] = ['video_curation', 'article_curation', 'advice', 'research', 'custom'];
+      const types: RequestType[] = ['video_recommendation', 'learning_path', 'topic_research', 'comparison', 'custom'];
       expect(types.length).toBe(5);
     });
 
@@ -104,7 +101,7 @@ describe('Type Definitions', () => {
         userId: '1',
         title: 'Test Request',
         description: 'Description',
-        type: 'advice',
+        type: 'video_recommendation',
         criteria: ['criterion1'],
         tags: ['tag1'],
         status: 'pending',
@@ -113,19 +110,19 @@ describe('Type Definitions', () => {
         updatedAt: new Date(),
       };
 
-      expect(request.type).toBe('advice');
+      expect(request.type).toBe('video_recommendation');
       expect(request.status).toBe('pending');
     });
   });
 
-  describe('Content types', () => {
-    it('should correctly type content types', () => {
-      const types: ContentType[] = ['video', 'article', 'paper', 'tutorial', 'tool', 'course', 'other'];
-      expect(types.length).toBe(7);
+  describe('Video types', () => {
+    it('should correctly type video categories', () => {
+      const categories: VideoCategory[] = ['tutorial', 'lecture', 'documentary', 'course', 'talk', 'workshop', 'review', 'entertainment', 'other'];
+      expect(categories.length).toBe(9);
     });
 
-    it('should correctly type content statuses', () => {
-      const statuses: ContentStatus[] = ['pending', 'reviewed', 'approved', 'archived'];
+    it('should correctly type video statuses', () => {
+      const statuses: VideoStatus[] = ['pending', 'reviewed', 'approved', 'archived'];
       expect(statuses.length).toBe(4);
     });
   });

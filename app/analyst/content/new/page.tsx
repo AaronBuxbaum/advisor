@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { getAllTags } from '@/lib/data';
-import type { ContentType } from '@/types';
+import type { VideoCategory } from '@/types';
 
 export default function NewContentPage() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function NewContentPage() {
   const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [contentType, setContentType] = useState<ContentType>('article');
+  const [contentType, setContentType] = useState<VideoCategory>('tutorial');
   const [source, setSource] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
@@ -26,7 +26,7 @@ export default function NewContentPage() {
   const [annotation, setAnnotation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const contentTypes: ContentType[] = ['video', 'article', 'paper', 'tutorial', 'tool', 'course', 'other'];
+  const videoCategories: VideoCategory[] = ['tutorial', 'lecture', 'documentary', 'course', 'talk', 'workshop', 'review', 'entertainment', 'other'];
 
   const handleAddTag = () => {
     if (newTag && !selectedTags.includes(newTag)) {
@@ -70,14 +70,14 @@ export default function NewContentPage() {
 
     // Mock auto-fill based on URL
     if (url.includes('youtube')) {
-      setContentType('video');
+      setContentType('tutorial');
       setSource('YouTube');
-    } else if (url.includes('arxiv')) {
-      setContentType('paper');
-      setSource('arXiv');
-    } else if (url.includes('medium')) {
-      setContentType('article');
-      setSource('Medium');
+    } else if (url.includes('coursera') || url.includes('udemy')) {
+      setContentType('course');
+      setSource(url.includes('coursera') ? 'Coursera' : 'Udemy');
+    } else if (url.includes('netflix') || url.includes('curiositystream')) {
+      setContentType('documentary');
+      setSource(url.includes('netflix') ? 'Netflix' : 'CuriosityStream');
     }
 
     setIsLoading(false);
@@ -156,9 +156,9 @@ export default function NewContentPage() {
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     value={contentType}
-                    onChange={(e) => setContentType(e.target.value as ContentType)}
+                    onChange={(e) => setContentType(e.target.value as VideoCategory)}
                   >
-                    {contentTypes.map((type) => (
+                    {videoCategories.map((type) => (
                       <option key={type} value={type}>
                         {type.charAt(0).toUpperCase() + type.slice(1)}
                       </option>

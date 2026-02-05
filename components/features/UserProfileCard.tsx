@@ -60,8 +60,8 @@ export function UserProfileCard({ profile, showHistory = true }: UserProfileCard
               <span className="capitalize">{profile.preferences.contentLength || 'Not set'}</span>
             </div>
             <div>
-              <span className="text-gray-500">Formats:</span>{' '}
-              <span>{profile.preferences.preferredFormats?.join(', ') || 'Not set'}</span>
+              <span className="text-gray-500">Platforms:</span>{' '}
+              <span>{profile.preferences.preferredPlatforms?.join(', ') || 'Not set'}</span>
             </div>
           </div>
         </div>

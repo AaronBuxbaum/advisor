@@ -9,7 +9,7 @@ export default function NewRequest() {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [type, setType] = useState<'video_curation' | 'article_curation' | 'advice' | 'custom'>('video_curation');
+  const [type, setType] = useState<'video_recommendation' | 'learning_path' | 'topic_research' | 'comparison' | 'custom'>('video_recommendation');
   const [criteria, setCriteria] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,9 +80,10 @@ export default function NewRequest() {
                 onChange={(e) => setType(e.target.value as any)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="video_curation">Video Curation</option>
-                <option value="article_curation">Article Curation</option>
-                <option value="advice">Expert Advice</option>
+                <option value="video_recommendation">Video Recommendation</option>
+                <option value="learning_path">Learning Path</option>
+                <option value="topic_research">Topic Research</option>
+                <option value="comparison">Video Comparison</option>
                 <option value="custom">Custom Request</option>
               </select>
             </div>

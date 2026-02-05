@@ -11,6 +11,7 @@ export interface User {
   role: UserRole;
   roles: UserRole[]; // Users can have multiple roles (e.g., expert + analyst)
   subscriptionStatus: 'active' | 'inactive' | 'trial';
+  platformSubscriptions: string[]; // Platform IDs the user has access to
   avatarUrl?: string;
   bio?: string;
   expertise?: string[]; // For experts/analysts
@@ -32,7 +33,9 @@ export interface UserPreferences {
   learningStyle?: 'visual' | 'auditory' | 'reading' | 'kinesthetic';
   contentLength?: 'short' | 'medium' | 'long';
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
-  preferredFormats?: string[];
+  preferredPlatforms?: string[]; // Preferred platforms when multiple available
+  preferredLanguages?: string[];
+  subtitlePreference?: 'none' | 'same_language' | 'any';
   notificationSettings?: NotificationPreferences;
   [key: string]: unknown;
 }
@@ -80,10 +83,149 @@ export interface Question {
 }
 
 // ============================================
+// Video Platform Types
+// ============================================
+
+export type PlatformType = 'subscription' | 'freemium' | 'free' | 'purchase' | 'rental' | 'educational';
+
+export interface Platform {
+  id: string;
+  name: string;
+  slug: string; // e.g., 'youtube', 'netflix', 'coursera'
+  type: PlatformType;
+  logoUrl?: string;
+  websiteUrl: string;
+  description: string;
+  // Pricing tiers (optional - for detailed pricing info)
+  pricingTiers?: PlatformTier[];
+  hasFreeTier?: boolean;
+  hasPremiumTier?: boolean;
+  supportsCreatorSubscriptions?: boolean; // e.g., YouTube memberships, Patreon integration
+  supportsPerVideoPurchase?: boolean;
+  // API integration info
+  hasApi: boolean;
+  apiDocsUrl?: string;
+  apiCapabilities?: PlatformApiCapabilities;
+  // Platform characteristics
+  supportsSubtitles: boolean;
+  supportedLanguages: string[];
+  supportsDownload: boolean;
+  supportsOffline: boolean;
+  averageVideoQuality: 'sd' | 'hd' | '4k' | 'varies';
+  // Metadata
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PlatformTier {
+  id: string;
+  name: string; // e.g., 'Free', 'Premium', 'Family'
+  price?: number;
+  currency?: string;
+  billingPeriod?: 'monthly' | 'yearly' | 'one_time';
+  features: string[];
+  hasAds: boolean;
+  maxQuality: 'sd' | 'hd' | '4k';
+  allowsDownload: boolean;
+  allowsOffline: boolean;
+}
+
+export interface PlatformApiCapabilities {
+  canFetchMetadata: boolean;
+  canVerifyAccess: boolean;
+  canGetPlaybackUrl: boolean;
+  canSearchContent: boolean;
+  canGetTranscripts: boolean;
+  rateLimitPerHour?: number;
+  authType?: 'oauth' | 'api_key' | 'none';
+}
+
+// ============================================
+// Video Source Types
+// ============================================
+
+export interface VideoSource {
+  id: string;
+  videoId: string; // Reference to the Video/ContentItem
+  platformId: string;
+  url: string;
+  // Platform-specific identifiers
+  platformVideoId?: string; // e.g., YouTube video ID, Netflix title ID
+  embedUrl?: string;
+  // Access requirements (detailed access info)
+  accessRequirements?: VideoAccessRequirement;
+  // Simple pricing for backward compatibility
+  price?: number;
+  currency?: string;
+  // Availability & quality info
+  isAvailable: boolean;
+  lastVerified?: Date;
+  availableQualities: VideoQuality[];
+  hasSubtitles: boolean;
+  subtitleLanguages: string[];
+  // Analyst notes about this specific source
+  platformNotes: PlatformNote[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type VideoAccessType = 'free' | 'free_with_ads' | 'subscription' | 'purchase' | 'rental' | 'creator_subscription' | 'course_enrollment';
+
+export interface VideoAccessRequirement {
+  accessType: VideoAccessType;
+  // For subscription access
+  requiredTier?: string; // Platform tier required (e.g., 'premium', 'family')
+  // For purchase/rental
+  price?: number;
+  currency?: string;
+  rentalDuration?: number; // In hours
+  // For creator subscriptions (e.g., YouTube memberships, Patreon)
+  creatorId?: string;
+  creatorName?: string;
+  creatorSubscriptionPrice?: number;
+  creatorSubscriptionUrl?: string;
+  // For course enrollment
+  courseId?: string;
+  courseName?: string;
+  coursePrice?: number;
+  // Free tier limitations
+  freeWithLimitations?: string; // e.g., 'First 3 episodes free', 'Preview only'
+  // Regional restrictions
+  availableRegions?: string[]; // ISO country codes, empty = worldwide
+  blockedRegions?: string[];
+}
+
+export type VideoQuality = '360p' | '480p' | '720p' | '1080p' | '4k' | 'unknown';
+
+export interface PlatformNote {
+  id: string;
+  videoSourceId: string;
+  analystId: string;
+  noteType: 'quality' | 'content_difference' | 'subtitle' | 'availability' | 'recommendation' | 'warning';
+  title: string;
+  description: string;
+  // Comparison details
+  comparedToPlatformId?: string; // If comparing to another platform
+  rating?: number; // 1-5 rating for this platform's version
+  // Specific differences
+  differences?: ContentDifference[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ContentDifference {
+  type: 'duration' | 'quality' | 'subtitles' | 'audio' | 'content_cut' | 'bonus_content' | 'other';
+  description: string;
+  severity: 'minor' | 'moderate' | 'significant';
+  timestamp?: number; // If difference is at a specific point in the video
+}
+
+// ============================================
 // Request Types
 // ============================================
 
-export type RequestType = 'video_curation' | 'article_curation' | 'advice' | 'research' | 'custom';
+export type RequestType = 'video_recommendation' | 'learning_path' | 'topic_research' | 'comparison' | 'custom';
 export type RequestStatus = 'pending' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
 export type RequestPriority = 'low' | 'normal' | 'high' | 'urgent';
 
@@ -167,37 +309,98 @@ export interface KnowledgeEntry {
 }
 
 // ============================================
-// Analyst Content Types
+// Video Content Types
 // ============================================
 
-export type ContentStatus = 'pending' | 'reviewed' | 'approved' | 'archived';
-export type ContentType = 'video' | 'article' | 'paper' | 'tutorial' | 'tool' | 'course' | 'other';
+export type VideoStatus = 'pending' | 'reviewed' | 'approved' | 'archived';
+export type VideoCategory = 'tutorial' | 'lecture' | 'documentary' | 'course' | 'talk' | 'workshop' | 'review' | 'entertainment' | 'other';
 
-export interface ContentItem {
+export interface Video {
   id: string;
   analystId: string;
-  url: string;
   title: string;
   description: string;
-  contentType: ContentType;
-  source: string; // e.g., "YouTube", "Medium", "ArXiv"
+  category: VideoCategory;
+  // Multi-platform sources
+  sources: VideoSource[];
+  primarySourceId?: string; // Recommended source
+  // Content details
+  duration: number; // In seconds
+  language: string;
+  hasTranscript: boolean;
+  transcriptUrl?: string;
+  // Creator info
+  creator: VideoCreator;
+  publishedDate?: Date;
+  // Categorization
   tags: Tag[];
-  annotations: Annotation[];
-  status: ContentStatus;
+  topics: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'all_levels';
+  targetAudience?: string[];
+  prerequisites?: string[];
+  // Quality & review
+  status: VideoStatus;
   qualityScore?: number;
-  relevanceAreas: string[];
-  metadata: ContentMetadata;
+  expertRatings: VideoRating[];
+  annotations: Annotation[];
+  // Relationships
+  relatedVideoIds: string[];
+  seriesId?: string; // If part of a series
+  seriesOrder?: number;
+  // Metadata
+  thumbnailUrl?: string;
   createdAt: Date;
   updatedAt: Date;
   reviewedAt?: Date;
   reviewedBy?: string;
 }
 
+export interface VideoCreator {
+  name: string;
+  channelUrl?: string;
+  platformChannelIds?: Record<string, string>; // platformId -> channelId
+  verified?: boolean;
+  expertise?: string[];
+}
+
+export interface VideoRating {
+  id: string;
+  videoId: string;
+  expertId: string;
+  overallRating: number; // 1-5
+  contentAccuracy?: number; // 1-5
+  productionQuality?: number; // 1-5
+  explanationClarity?: number; // 1-5
+  practicalValue?: number; // 1-5
+  review?: string;
+  recommendedFor?: string[]; // e.g., ['beginners', 'visual learners']
+  notRecommendedFor?: string[];
+  createdAt: Date;
+}
+
+export interface VideoSeries {
+  id: string;
+  title: string;
+  description: string;
+  creatorName: string;
+  videoIds: string[];
+  totalDuration: number;
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'progressive';
+  isComplete: boolean;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Legacy alias for backwards compatibility
+export type ContentStatus = VideoStatus;
+export type ContentType = VideoCategory;
+export type ContentItem = Video;
+
 export interface ContentMetadata {
   author?: string;
   publishedDate?: Date;
-  duration?: number; // For videos, in seconds
-  wordCount?: number; // For articles
+  duration?: number;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
   language?: string;
   thumbnail?: string;
