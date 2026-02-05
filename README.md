@@ -60,7 +60,7 @@ This platform enables a three-stakeholder ecosystem:
 
 ### Prerequisites
 - Node.js 20+
-- bun
+- bun 1.0+
 
 ### Installation
 
