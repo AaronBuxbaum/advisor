@@ -16,8 +16,8 @@ This is the advisor repository. When contributing to this project, please follow
 
 - Use consistent indentation:
   - 2 spaces for JavaScript, TypeScript, JSON, YAML, HTML, CSS
-  - 4 spaces for Python, Java, C#, Go
-  - Use tabs for Makefiles and Go (when conventional)
+  - 4 spaces for Python, Java, C#
+  - Tabs for Go and Makefiles (enforced by gofmt for Go)
 - Follow the existing code style in the repository
 - Write self-documenting code with clear naming
 - Add comments only when necessary to explain complex logic or business rules
