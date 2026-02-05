@@ -14,11 +14,14 @@ This is the advisor repository. When contributing to this project, please follow
 
 ## Code Style
 
-- Use consistent indentation (2 or 4 spaces based on language conventions)
+- Use consistent indentation:
+  - 2 spaces for JavaScript, TypeScript, JSON, YAML, HTML, CSS
+  - 4 spaces for Python, Java, C#, Go
+  - Use tabs for Makefiles and Go (when conventional)
 - Follow the existing code style in the repository
 - Write self-documenting code with clear naming
 - Add comments only when necessary to explain complex logic or business rules
-- Keep line lengths reasonable (80-120 characters)
+- Keep line lengths to a maximum of 100 characters
 
 ## Documentation
 
