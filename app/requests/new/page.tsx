@@ -149,7 +149,7 @@ export default function NewRequest() {
           <ul className="space-y-2 text-sm text-gray-600">
             <li className="flex items-start">
               <span className="text-blue-600 mr-2">•</span>
-              <span>Be specific about what you're looking for and why</span>
+              <span>Be specific about what you are looking for and why</span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-600 mr-2">•</span>

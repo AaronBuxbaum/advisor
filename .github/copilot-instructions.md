@@ -87,3 +87,41 @@ This is the advisor repository. When contributing to this project, please follow
 - Test changes locally when reviewing
 - Ensure CI/CD checks pass
 - Check for security vulnerabilities
+
+## GitHub API Access
+
+Claude and Copilot can access the GitHub API using the `gh` CLI tool for repository operations. To enable authenticated API access:
+
+### Authentication
+- A GitHub Personal Access Token (PAT) can be provided for API access
+- Store the token securely and never commit it to the repository
+- The token should have appropriate scopes for the required operations:
+  - `repo` - Full control of private repositories
+  - `read:org` - Read organization membership
+  - `workflow` - Update GitHub Actions workflows
+
+### Using the GitHub CLI (`gh`)
+```bash
+# Authenticate with a token
+echo "$GITHUB_TOKEN" | gh auth login --with-token
+
+# Common operations
+gh pr list                    # List pull requests
+gh pr create                  # Create a pull request
+gh pr view <number>           # View PR details
+gh issue list                 # List issues
+gh issue create               # Create an issue
+gh api repos/{owner}/{repo}   # Direct API access
+gh run list                   # List workflow runs
+gh run view <run-id>          # View workflow run details
+```
+
+### Environment Variables
+- `GITHUB_TOKEN` - Personal access token for API authentication
+- `GH_TOKEN` - Alternative variable name (also supported by `gh`)
+
+### Best Practices
+- Use the minimum required token scopes
+- Prefer `gh` CLI over direct API calls when possible
+- Handle rate limiting gracefully
+- Never log or expose tokens in output
