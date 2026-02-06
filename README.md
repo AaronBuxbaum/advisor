@@ -190,9 +190,43 @@ bun test                 # Run all tests
 bun run test:coverage    # Run with coverage report
 ```
 
+## Deployment
+
+### Vercel Deployment
+
+This application is configured for automatic deployment to Vercel.
+
+#### Automatic Deployments
+- **Production**: Automatically deploys from `main` branch
+- **Preview**: Automatically deploys from pull requests
+
+#### Manual Deployment
+To deploy manually using the Vercel CLI:
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy to preview
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+#### Required Secrets
+Add these secrets to your GitHub repository for automatic deployments:
+- `VERCEL_TOKEN`: Your Vercel authentication token
+- `VERCEL_ORG_ID`: Your Vercel organization ID
+- `VERCEL_PROJECT_ID`: Your Vercel project ID
+
+See the [Vercel documentation](https://vercel.com/docs/cli#project-linking) for details on obtaining these values.
+
 ## CI/CD Pipeline
 
-GitHub Actions workflow includes:
+GitHub Actions workflows include:
+
+### CI Workflow
 1. **Lint & Type Check**: ESLint and TypeScript validation
 2. **Test**: Jest test suite with coverage
 3. **Build**: Production build verification
@@ -200,6 +234,15 @@ GitHub Actions workflow includes:
 Triggers on:
 - Push to `main` or `claude/**` branches
 - Pull requests to `main`
+
+### Vercel Deploy Workflow
+1. **Build**: Builds the project using Vercel CLI
+2. **Deploy**: Deploys to Vercel (production or preview)
+3. **Comment**: Posts deployment URL to pull requests
+
+Triggers on:
+- Push to `main` branch (production deployment)
+- Pull requests to `main` (preview deployment)
 
 ## Architecture Decisions
 
