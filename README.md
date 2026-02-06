@@ -174,7 +174,7 @@ See `CONTEXT.md` for detailed entity documentation.
 - **Language**: TypeScript 5.9
 - **UI**: React 19
 - **Styling**: Tailwind CSS 4
-- **Testing**: Jest + React Testing Library
+- **Testing**: Bun Test + React Testing Library
 - **CI/CD**: GitHub Actions
 
 ## Testing
@@ -187,14 +187,14 @@ The project includes comprehensive tests for:
 Run tests:
 ```bash
 bun test                 # Run all tests
-bun run test:coverage    # Run with coverage report
+bun test --coverage      # Run with coverage report
 ```
 
 ## CI/CD Pipeline
 
 GitHub Actions workflow includes:
 1. **Lint & Type Check**: ESLint and TypeScript validation
-2. **Test**: Jest test suite with coverage
+2. **Test**: Bun test suite with coverage
 3. **Build**: Production build verification
 
 Triggers on:
