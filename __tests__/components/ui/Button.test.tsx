@@ -1,5 +1,7 @@
+import { describe, it, expect } from 'bun:test';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { mock } from 'bun:test';
 import { Button } from '@/components/ui/Button';
 
 describe('Button Component', () => {
@@ -9,7 +11,7 @@ describe('Button Component', () => {
   });
 
   it('handles click events', () => {
-    const handleClick = jest.fn();
+    const handleClick = mock();
     render(<Button onClick={handleClick}>Click me</Button>);
 
     fireEvent.click(screen.getByText('Click me'));

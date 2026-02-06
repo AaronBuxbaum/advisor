@@ -1,4 +1,6 @@
+import { describe, it, expect } from 'bun:test';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { spyOn } from 'bun:test';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 
 describe('Tabs Components', () => {
@@ -96,7 +98,7 @@ describe('Tabs Components', () => {
 
     it('throws error when used outside Tabs', () => {
       // Suppress console.error for this test
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => {
         render(<TabsTrigger value="tab1">Tab 1</TabsTrigger>);
@@ -128,7 +130,7 @@ describe('Tabs Components', () => {
 
     it('throws error when used outside Tabs', () => {
       // Suppress console.error for this test
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => {
         render(<TabsContent value="tab1">Content</TabsContent>);

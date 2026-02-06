@@ -1,4 +1,6 @@
+import { describe, it, expect } from 'bun:test';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { mock } from 'bun:test';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 
 describe('Input Component', () => {
@@ -24,7 +26,7 @@ describe('Input Component', () => {
   });
 
   it('handles onChange events', () => {
-    const handleChange = jest.fn();
+    const handleChange = mock();
     render(<Input onChange={handleChange} data-testid="input" />);
     fireEvent.change(screen.getByTestId('input'), { target: { value: 'test' } });
     expect(handleChange).toHaveBeenCalled();
@@ -64,7 +66,7 @@ describe('Textarea Component', () => {
   });
 
   it('handles onChange events', () => {
-    const handleChange = jest.fn();
+    const handleChange = mock();
     render(<Textarea onChange={handleChange} data-testid="textarea" />);
     fireEvent.change(screen.getByTestId('textarea'), { target: { value: 'test content' } });
     expect(handleChange).toHaveBeenCalled();
@@ -121,7 +123,7 @@ describe('Select Component', () => {
   });
 
   it('handles onChange events', () => {
-    const handleChange = jest.fn();
+    const handleChange = mock();
     render(
       <Select onChange={handleChange} data-testid="select">
         <option value="a">Option A</option>
