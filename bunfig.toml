@@ -1,0 +1,5 @@
+[test]
+# Use happy-dom for React component testing  
+preload = ["./bun.setup.ts"]
+# Set test environment
+env = ["NODE_ENV=test"]

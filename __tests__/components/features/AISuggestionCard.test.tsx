@@ -1,4 +1,6 @@
+import { describe, it, expect } from 'bun:test';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { mock } from 'bun:test';
 import { AISuggestionCard, AISuggestionsList } from '@/components/features/AISuggestionCard';
 import { AISuggestion } from '@/types';
 
@@ -71,7 +73,7 @@ describe('AISuggestionCard', () => {
   });
 
   it('renders Accept button when onAccept is provided', () => {
-    const onAccept = jest.fn();
+    const onAccept = mock();
     render(<AISuggestionCard suggestion={mockSuggestion} onAccept={onAccept} />);
     expect(screen.getByText('Accept')).toBeInTheDocument();
   });
@@ -82,14 +84,14 @@ describe('AISuggestionCard', () => {
   });
 
   it('calls onAccept with suggestion id when Accept is clicked', () => {
-    const onAccept = jest.fn();
+    const onAccept = mock();
     render(<AISuggestionCard suggestion={mockSuggestion} onAccept={onAccept} />);
     fireEvent.click(screen.getByText('Accept'));
     expect(onAccept).toHaveBeenCalledWith('sug-1');
   });
 
   it('renders Dismiss button when onDismiss is provided', () => {
-    const onDismiss = jest.fn();
+    const onDismiss = mock();
     render(<AISuggestionCard suggestion={mockSuggestion} onDismiss={onDismiss} />);
     expect(screen.getByText('Dismiss')).toBeInTheDocument();
   });
@@ -100,15 +102,15 @@ describe('AISuggestionCard', () => {
   });
 
   it('calls onDismiss with suggestion id when Dismiss is clicked', () => {
-    const onDismiss = jest.fn();
+    const onDismiss = mock();
     render(<AISuggestionCard suggestion={mockSuggestion} onDismiss={onDismiss} />);
     fireEvent.click(screen.getByText('Dismiss'));
     expect(onDismiss).toHaveBeenCalledWith('sug-1');
   });
 
   it('renders both buttons when both handlers are provided', () => {
-    const onAccept = jest.fn();
-    const onDismiss = jest.fn();
+    const onAccept = mock();
+    const onDismiss = mock();
     render(<AISuggestionCard suggestion={mockSuggestion} onAccept={onAccept} onDismiss={onDismiss} />);
     expect(screen.getByText('Accept')).toBeInTheDocument();
     expect(screen.getByText('Dismiss')).toBeInTheDocument();
@@ -141,7 +143,7 @@ describe('AISuggestionsList', () => {
   });
 
   it('passes onAccept to each card', () => {
-    const onAccept = jest.fn();
+    const onAccept = mock();
     render(<AISuggestionsList suggestions={mockSuggestions} onAccept={onAccept} />);
 
     const acceptButtons = screen.getAllByText('Accept');
@@ -152,7 +154,7 @@ describe('AISuggestionsList', () => {
   });
 
   it('passes onDismiss to each card', () => {
-    const onDismiss = jest.fn();
+    const onDismiss = mock();
     render(<AISuggestionsList suggestions={mockSuggestions} onDismiss={onDismiss} />);
 
     const dismissButtons = screen.getAllByText('Dismiss');
